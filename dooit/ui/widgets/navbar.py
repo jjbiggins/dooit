@@ -151,12 +151,7 @@ class Navbar(NestedListEdit):
         Adds sibling for the currently selected node
         """
 
-        parent = self.highlighted_node.parent
-
-        if not parent:
-            await self.add_child()
-            return
-        else:
+        if parent := self.highlighted_node.parent:
             children = parent.children
             tree = parent.tree.children
 
@@ -169,6 +164,9 @@ class Navbar(NestedListEdit):
             while self.highlighted != id:
                 await self.cursor_down()
 
+        else:
+            await self.add_child()
+            return
         await self.focus_node()
         self.refresh()
 
@@ -181,15 +179,12 @@ class Navbar(NestedListEdit):
 
         # Setup pre-icons
         if node.children:
-            if not node.expanded:
-                icon = icons["nested_close"]
-            else:
-                icon = icons["nested_open"]
+            icon = icons["nested_open"] if node.expanded else icons["nested_close"]
         else:
             icon = icons["single_topic"]
 
         # Padding adjustment
-        label.plain = f" {icon} " + label.plain + " "
+        label.plain = f" {icon} {label.plain} "
         label.pad_right(self.size.width)
 
         if node.id == self.highlighted:

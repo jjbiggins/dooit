@@ -117,20 +117,19 @@ class Doit(App):
 
         self.grid.place(**placements)
 
-        borders = []
-        for i in range(2):
-            borders.append(
-                [
-                    f"middle{2 * i}",
-                    f"top_connector{2 * i}",
-                    f"top{i}",
-                    f"top_connector{2 * i + 1}",
-                    f"middle{2 * i + 1}",
-                    f"bottom_connector{2 * i + 1}",
-                    f"bottom{i}",
-                    f"bottom_connector{2 * i}",
-                ]
-            )
+        borders = [
+            [
+                f"middle{2 * i}",
+                f"top_connector{2 * i}",
+                f"top{i}",
+                f"top_connector{2 * i + 1}",
+                f"middle{2 * i + 1}",
+                f"bottom_connector{2 * i + 1}",
+                f"bottom{i}",
+                f"bottom_connector{2 * i}",
+            ]
+            for i in range(2)
+        ]
 
         self.navbar_box = self._make_box(borders[0])
         self.todos_box = self._make_box(borders[1])
@@ -158,10 +157,7 @@ class Doit(App):
         self.grid.add_areas(**areas)
 
         # WIDGET SPACES
-        middle_areas = dict()
-        middle_areas["0b"] = "0,b"
-        middle_areas["1b"] = "1,b"
-
+        middle_areas = {"0b": "0,b", "1b": "1,b"}
         self.grid.add_areas(**middle_areas)
 
         # WIDGET BORDERS

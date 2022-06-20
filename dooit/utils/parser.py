@@ -56,18 +56,16 @@ class Parser:
     # --------------------------------
 
     def fetch_usable_info_todo(self, todo: TodoList) -> list:
-        x = []
-        for i in todo.root.children:
-            x.append([i.data.encode(), [j.data.encode() for j in i.children]])
-
-        return x
+        return [
+            [i.data.encode(), [j.data.encode() for j in i.children]]
+            for i in todo.root.children
+        ]
 
     def fetch_usable_info_topic(self, topic: Navbar) -> list:
-        x = []
-        for i in topic.root.children:
-            x.append([i.data.value, [j.data.value for j in i.children]])
-
-        return x
+        return [
+            [i.data.value, [j.data.value for j in i.children]]
+            for i in topic.root.children
+        ]
 
     # --------------------------------
 
