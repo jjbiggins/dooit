@@ -94,11 +94,7 @@ class SimpleInput(Widget):
         return text[self.view.start : self.view.end]
 
     def _set_view(self):
-        if self.box:
-            self.width = self.size.width - 4
-        else:
-            self.width = self.size.width
-
+        self.width = self.size.width - 4 if self.box else self.size.width
         # self.width = self.size.width - 4
         self.view = View(0, self.width)
 
@@ -112,11 +108,10 @@ class SimpleInput(Widget):
 
         if self.has_focus:
             text = self._render_text_with_cursor()
+        elif len(self.value) == 0:
+            return self.render_panel(self.placeholder)
         else:
-            if len(self.value) == 0:
-                return self.render_panel(self.placeholder)
-            else:
-                text = self.value
+            text = self.value
 
         formatted_text = Text.from_markup(self._format_text(text))
         return self.render_panel(formatted_text)
@@ -172,16 +167,13 @@ class SimpleInput(Widget):
         self.refresh()
 
     def _is_allowed(self, text: str) -> bool:
-        if self.list[0] == "whitelist":
-            for letter in text:
-                if letter not in self.list[1]:
-                    return False
-        else:
-            for letter in text:
-                if letter in self.list[1]:
-                    return False
-
-        return True
+        return not any(
+            self.list[0] == "whitelist"
+            and letter not in self.list[1]
+            or self.list[0] != "whitelist"
+            and letter in self.list[1]
+            for letter in text
+        )
 
     async def _insert_text(self, text: str | None = None) -> None:
         """
@@ -247,17 +239,16 @@ class SimpleInput(Widget):
             self._cursor_position = min(self._cursor_position + 1, len(self.value))
         else:
 
-            while self._cursor_position < len(self.value):
-                if (
+            while self._cursor_position < len(self.value) and not (
+                (
                     self._cursor_position != prev
                     and self.value[self._cursor_position - 1] == " "
                     and (
                         self._cursor_position == len(self.value) - 1
                         or self.value[self._cursor_position] != " "
                     )
-                ):
-                    break
-
+                )
+            ):
                 self._cursor_position += 1
 
         if delete:
